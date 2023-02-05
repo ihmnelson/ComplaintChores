@@ -1,8 +1,10 @@
 class Person:
-    def __init__(self, name: str, email: str, abilities: list):
+    def __init__(self, name: str, number: int, abilities: list):
         name = name
-        email = email
+        number = number
         abilities = abilities
 
-    def send_email(self):
+
+class Chore:
+    def __init__(self):
         return

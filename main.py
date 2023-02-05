@@ -1,13 +1,33 @@
 import json
-from stuff import *
+import requests
+import http.server
+import os
+import argparse
 
-with open('data/chores.json', 'r') as f:
-    chores = json.load(f)
-with open('data/people.json', 'r') as f:
-    people = json.load(f)
 
-print(chores)
-print(people)
+class Handler(http.server.BaseHTTPRequestHandler):
+    # View lists of chores and people
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        with open('data/systems.json', 'r') as file:
+            message = file.read()
+        self.wfile.write(bytes(message, "utf8"))
 
-guy = Person(1)
+    # When they try to set or edit data
+    def do_PUT(self):
+        path = self.path
+        print('Path ' + path)
 
+
+with http.server.HTTPServer(('', 8000), Handler) as server:
+    server.serve_forever()
+
+
+def addSystem(email, data: dict):
+    with open('data/systems.json', 'r+') as file:
+        curSystems = json.load(file)
+    curSystems[email] = data
+    with open('data/systems.json', 'w') as file:
+        json.dump(curSystems, file, indent=4)
