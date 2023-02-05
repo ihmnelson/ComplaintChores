@@ -18,6 +18,24 @@ def addSystem(email):
         json.dump(default_system, file, indent=4)
 
 
+def addPerson(email: str, people: list):
+    with open(f'systems{email}.json', 'r') as file:
+        system = json.load(file)
+    for person in people:
+        system['people'].append(person)
+    with open(f'systems/{email}.json', 'w') as file:
+        json.dump(system, file)
+
+
+def addChore(email: str, chores: list):
+    with open(f'systems{email}.json', 'r') as file:
+        system = json.load(file)
+    for chore in chores:
+        system['chores'].append(chore)
+    with open(f'systems/{email}.json', 'w') as file:
+        json.dump(system, file)
+
+
 class Handler(http.server.BaseHTTPRequestHandler):
     def _set_headers(self):
         self.send_response(200)
@@ -64,6 +82,24 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = json.loads(post_body.decode('utf8'))
 
             addSystem(content['email'])
+
+            self.send_response(200)
+            self.end_headers()
+        elif path_split[0] == 'person':
+            content_len = int(self.headers.get('content-length', 0))
+            post_body = self.rfile.read(content_len)
+            content = json.loads(post_body.decode('utf8'))
+
+            addPerson(content['email'], content['people'])
+
+            self.send_response(200)
+            self.end_headers()
+        elif path_split[0] == 'chore':
+            content_len = int(self.headers.get('content-length', 0))
+            post_body = self.rfile.read(content_len)
+            content = json.loads(post_body.decode('utf8'))
+
+            addChore(content['email'], content['chores'])
 
             self.send_response(200)
             self.end_headers()
