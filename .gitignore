@@ -133,3 +133,5 @@ dmypy.json
 systems/
 .idea/
 token.txt
+log.txt
+
