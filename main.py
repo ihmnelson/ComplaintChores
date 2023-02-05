@@ -17,8 +17,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     # When they try to set or edit data
     def do_PUT(self):
+        valid_calls = [
+            'addUser',
+            'rmUser',
+            'editUser'
+        ]
         path = self.path
-        print('Path ' + path)
+        pathSplit = path.split('/')
+        pathSplit.remove('')
+
+        if pathSplit[0] in valid_calls:
+            self.send_response(200)
+            self.end_headers()
 
 
 with http.server.HTTPServer(('', 8000), Handler) as server:
