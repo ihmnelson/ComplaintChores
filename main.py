@@ -3,6 +3,9 @@ import json
 import http.server
 import os
 
+import alarm
+from alarm import *
+
 
 def addSystem(email):
     default_system = {
@@ -37,6 +40,13 @@ def addChore(email: str, chores: list):
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', '*')
+        self.send_header("Access-Control-Allow-Headers", "*")
+        self.end_headers()
+
     def _set_headers(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -81,6 +91,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             post_body = self.rfile.read(content_len)
             content = json.loads(post_body.decode('utf8'))
 
+            print(content)
+
             addSystem(content['email'])
 
             self.send_response(200)
@@ -101,6 +113,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
             addChore(content['email'], content['chores'])
 
+            self.send_response(200)
+            self.end_headers()
+        elif path_split[0] == 'send':
+            alarm.send_all()
             self.send_response(200)
             self.end_headers()
 
